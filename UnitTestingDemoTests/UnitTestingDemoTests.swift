@@ -14,40 +14,46 @@ class UnitTestingDemoTests: XCTestCase {
     override func setUpWithError() throws {
         // Put setup code here. This method is called before the invocation of each test method in the class.
          controller = ViewController()
+        _ = controller.view
     }
 
     override func tearDownWithError() throws {
         // Put teardown code here. This method is called after the invocation of each test method in the class.
         controller = nil
     }
-
-    func testExample() throws {
-        // This is an example of a functional test case.
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
-
-        XCTAssertNil(controller.usernameTextField.text)
-        XCTAssertNil(controller.passwordTextField.text)
-        let status = controller.validateLogin("sai", "123")
-        XCTAssertNil(status)
-        XCTAssertTrue(status,"Login failed")
+    
+    func testLoginStatusSuccess() {
+        let successStatus = controller.checkValidation(.login)
+        XCTAssertTrue(successStatus, "Login Status is true")
+    }
+    
+    func testLoginStatusFailed() {
+        let status = controller.checkValidation(.logout)
+        XCTAssertFalse(status, "Login Status is false")
     }
     
     func testHttpStatusCode() {
+        var searchResults = [[String:Any]]()
         let session = URLSession(configuration: .default)
         let url = URL(string: "https://jsonplaceholder.typicode.com/posts")!
         var statusCode: Int?
         var responseErr: Error?
-        let promise = expectation(description: "Closure")
+        XCTAssertEqual(searchResults.count, 0,"count is zero before executing service")
+        let promise = expectation(description: "Status Code: 200")
         session.dataTask(with: url) { (data, res, err) in
             if let res:HTTPURLResponse = res as? HTTPURLResponse {
                 statusCode = res.statusCode
                 responseErr = err
-                promise.fulfill()
             }
+            if let jsonData = try? JSONSerialization.jsonObject(with: data!, options: []) as? [[String:Any]] {
+                searchResults = jsonData
+            }
+            promise.fulfill()
         }.resume()
-        wait(for: [promise], timeout: 5)
+        wait(for: [promise], timeout: 3)
         XCTAssertNil(responseErr)
         XCTAssertEqual(statusCode, 200)
+        XCTAssertEqual(searchResults.count, 100, "not equal")
     }
 
     func testPerformanceExample() throws {

@@ -27,7 +27,6 @@ class UnitTestingDemoUITests: XCTestCase {
     
     func testFormEmpty() {
 
-        
         let username = app.textFields["Username"]
         XCTAssertTrue(username.exists)
         username.tap()
@@ -73,6 +72,26 @@ class UnitTestingDemoUITests: XCTestCase {
         let alert = app.alerts["Alert"].scrollViews.otherElements.buttons["Ok"]
         XCTAssertTrue(alert.exists)
         alert.tap()
+    }
+    
+    func testUserDetailsSuccess() {
+        
+        var validUsername = "sai"
+        var validPassword = "123"
+        
+        let username = app.textFields["Username"]
+        XCTAssertTrue(username.exists)
+        username.tap()
+        username.typeText(validUsername)
+        let password = app.textFields["Password"]
+        XCTAssertTrue(password.exists)
+        password.tap()
+        password.typeText(validPassword)
+        app/*@START_MENU_TOKEN@*/.staticTexts["Submit"]/*[[".buttons[\"Submit\"].staticTexts[\"Submit\"]",".staticTexts[\"Submit\"]"],[[[-1,1],[-1,0]]],[0]]@END_MENU_TOKEN@*/.tap()
+        let cell = app.tables.children(matching: .cell).element(boundBy: 0)
+        cell.staticTexts["saikrishnaaireddy529@gmail.com"].tap()
+        cell.staticTexts["Aireddy Saikrishna"].tap()
+        
     }
 
     func testLaunchPerformance() throws {

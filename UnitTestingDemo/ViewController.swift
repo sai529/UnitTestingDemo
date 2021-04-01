@@ -7,6 +7,11 @@
 
 import UIKit
 import CoreData
+
+enum LoginStatus {
+    case login
+    case logout
+}
 class ViewController: UIViewController {
     
     @IBOutlet weak var usernameTextField: UITextField!
@@ -24,6 +29,17 @@ class ViewController: UIViewController {
         if validateLogin(username, password) {
             let vc = storyboard?.instantiateViewController(withIdentifier: "TableViewController") as! TableViewController
             self.navigationController?.pushViewController(vc, animated: true)
+        }
+    }
+    
+    func checkValidation(_ loginStatus: LoginStatus)->Bool {
+        switch loginStatus {
+        case .login:
+            return true
+        case .logout:
+            return false
+        @unknown default:
+            return false
         }
     }
     
